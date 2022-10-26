@@ -1,8 +1,3 @@
-import 'dart:io';
-
-import 'package:expenses_app_continued/widgets/adaptive_button.dart';
-import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './adaptive_button.dart';
@@ -11,6 +6,7 @@ class NewTransaction extends StatefulWidget {
   final Function addTx;
 
   const NewTransaction(this.addTx, {super.key});
+
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -72,7 +68,6 @@ class _NewTransactionState extends State<NewTransaction> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               TextField(
-                cursorColor: Colors.blue,
                 decoration: const InputDecoration(labelText: 'Title'),
                 controller: _titleController,
                 onSubmitted: (_) => _submitData(),

@@ -95,6 +95,45 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  List<Widget> _buildLandscapeContent(MediaQueryData mediaQuery, PreferredSizeWidget appBar, transactionListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Switch.adaptive(
+            activeColor: Theme.of(context).primaryColor,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
+      ),
+      _showChart
+          ? SizedBox(
+              height: (mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top) * 0.7,
+              child: Chart(_recentTransactions),
+            )
+          : transactionListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(MediaQueryData mediaQuery, PreferredSizeWidget appBar, transactionListWidget) {
+    return [
+      SizedBox(
+        height: (mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top) * 0.3,
+        child: Chart(_recentTransactions),
+      ),
+      transactionListWidget
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -102,13 +141,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final PreferredSizeWidget appBar = (Platform.isIOS
         ? CupertinoNavigationBar(
-            middle: const Text('Personal Expenses'),
+            backgroundColor: Colors.cyan,
+            middle: const Text(
+              'Personal Expenses',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                fontSize: 24,
+                color: Colors.white,
+              ),
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 GestureDetector(
                   onTap: () => _startAddNewTransaction(context),
-                  child: const Icon(CupertinoIcons.add),
+                  child: const Icon(
+                    CupertinoIcons.add,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -135,34 +185,17 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).primaryColor,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  ),
-                  Text('Show Chart', style: Theme.of(context).textTheme.titleMedium,),
-                ],
+              ..._buildLandscapeContent(
+                mediaQuery,
+                appBar,
+                transactionListWidget,
               ),
             if (!isLandscape)
-              SizedBox(
-                height: (mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top) * 0.3,
-                child: Chart(_recentTransactions),
+              ..._buildPortraitContent(
+                mediaQuery,
+                appBar,
+                transactionListWidget,
               ),
-            if (!isLandscape) transactionListWidget,
-            if (isLandscape)
-              _showChart
-                  ? SizedBox(
-                      height: (mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top) * 0.7,
-                      child: Chart(_recentTransactions),
-                    )
-                  : transactionListWidget
           ],
         ),
       ),
